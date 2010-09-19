@@ -1,0 +1,40 @@
+TAGS
+        need to be able to tag posts
+        http://www.ibm.com/developerworks/xml/library/x-tipatom4.html -- <category term="Java" />
+        feedburner->publicize->socialize then enable add categories and the plugin
+
+
+TEMPLATING
+        should be done in stages:
+
+        nodify -- turn html into node tree
+        detect hooks -- turn nodehook="foo" into hook('foo') (wouldn't want to run this when parsing a blog post)
+        conversions -- turn <code type="php"> into <pre> or whatever for script (wouldn't neccessarily want to run this on original load/nodify of template)
+                       could pass 2 closures; 1 to match a node, 1 to replace it, or perhaps just 1 closure to inspect/replace?
+
+
+CODE INCLUSION & HIGHLIGHTING
+        SHJS                    -- onload="sh_highlightDocument('lang/', '.js') -- each pre has class eg. "sh_java", "sh_php" -- all GNU highlighter langs! no line numbers?
+        SyntaxHighlighter       -- nasty class="bullshit args here", most popular, acts against all <pre>s *guessing* from class="" whether to fuck with it or not, lots of langs
+        code-prettifier         -- google :) guesses langage (eww), quite a few langs but sounds a bit shit tbh
+        chilli                  -- better jqueryness, language specified as class="java", looks fucking old (2006, next version coming!?!?!?! ugh) hmm v3 is new in at github though. has line numbers
+
+
+        lib                     enough langs?   neat?   numbers?        copy_without_numbers?
+
+        SHJS                    y               y       n               n
+        SyntaxHighlighter       y               n       y               y in a weird flash way
+        code-prettify           ish             y       n               n
+        chilli                  ish             y       y               y
+
+        choice: seems like shjs is the nicest and best supported one, even if it's not so pretty -- can wrap in:
+                <div>
+                        <pre class="line-numbers">1.
+2.
+etc.</pre>
+                        <pre class="sh_java">code
+in
+here</pre>
+                </div>
+
+        note that this needs to be safe to output to feeds, so maybe the wrapping needs to occur in js

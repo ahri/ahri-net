@@ -1,0 +1,15 @@
+#Redirect 301 /interesting http://pipes.yahoo.com/pipes/pipe.run?_id=fkOftqly3hGIlcF6IDfpSg&_render=rss [L]
+Redirect 301 /apostrophes.html /apostrophes
+Redirect 301 /regex.html /regex
+Redirect 301 /feed http://feeds.feedburner.com/ahrinet
+
+RewriteEngine on
+# So long as it's not a file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d [OR]
+RewriteCond %{REQUEST_URI} ^/$
+# and it's not a special file that robots/browsers look for
+RewriteCond %{REQUEST_URI} !^/(robots.txt|favicon.ico)
+# and it's not circular
+RewriteCond %{REQUEST_URI} !^/Director.php$
+        RewriteRule .* /Director.php [L]

@@ -1,0 +1,215 @@
+<html>
+  <head>
+    <title>RegEx Introduction and Quick Reference</title>
+    <style>
+    <!--
+        body
+        {
+            background-color: #FFFFFF;
+            color: #000000;
+            font-family: Verdana, Arial, sans-serif;
+            font-size: small;
+        }
+
+        pre
+        {
+            background-color: #999999;
+            color: #000000;
+            font-size: larger;
+            padding: 5px;
+        }
+
+        a
+        {
+            color: #0000FF;
+            text-decoration: none;
+            font-weight: bolder;
+        }
+
+        h4
+        {
+            text-decoration: underline;
+        }
+
+        a:hover
+        {
+            color: #0000FF;
+            text-decoration: underline;
+            font-weight: bolder;
+        }
+
+        .smaller
+        {
+            font-size: smaller;
+        }
+    //-->
+    </style>
+  </head>
+  <body>
+    <h1>RegEx Introduction and Quick Reference</h1>
+    <div class="smaller">By Adam Piper (2004) - <a href="http://ahri.net/">link</a>. Last edited: 2005-07-07 (YYYY-MM-DD)<br>
+This quick reference guide can be distributed in whole or in part as
+you see fit, as long as Zend are given credit for the 'Basic Examples
+using Metacharacters' section.</div><p>
+    Note: <b>Most</b> of this info is available directly from the <a href="http://www.zend.com/">Zend Website</a>, there are a couple of original additions but most of it is
+    ripped with comments.</p><br/><br/>
+	<h3>A list of all the PCRE (Perl-Compatible Regular Expression) functions are available with full documentation in the PHP Manual, <a href="http://php.net/pcre">here's a quick link</a> to the pertinent page.</h3>
+
+    <h4>Basic Examples using Metacharacters</h4>
+    <i>Note that when I say 'bit' below, I really mean 'character or submatch', but don't worry about <a href="#submatching">submatches</a> just yet.</i>
+    <ul>
+      <li><pre>preg_match( '/apple/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+      </ul>
+      <li><pre>preg_match( '/a..le/', 'I saw the apple tree' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note: . = any char except new line.
+      </ul>
+      <li><pre>preg_match( '/^apple/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>False</i>.
+        <li>Note: ^ = start of string.
+      </ul>
+      <li><pre>preg_match( '/apple$/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>False</i>.
+        <li>Note: $ = end of string.
+      </ul>
+      <li><pre>preg_match( '/appleX?/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note: ? = prior bit can occur 0 or 1 times, X? == (X)?, XX? != (XX)?
+      </ul>
+      <li><pre>preg_match( '/ap*le/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note: * = 0 or more of prior bit (so appppple would match).
+      </ul>
+      <li><pre>preg_match( '/ap+le/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note: + = like * but 1 or more of the prior bit.
+      </ul>
+      <li><pre>preg_match( '/ap{2}le/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note: {x} = prior bit MUST match x times.
+      </ul>
+      <li><pre>preg_match( '/ap{2,4}le/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note: {x,z} = prior bit can match any amount of times between x &amp; z inclusive (so 2,3 or 4 in the eg).
+      </ul>
+      <li><pre>preg_match( '/(apple|orange)/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note: | = OR
+      </ul>
+      <li><pre>preg_match( '/apple[0-9m-z]/', 'I saw the apples tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.<br>
+        <li>Note: [] = range of chars. [0-9a-zA-Z] would match every char/numeral.
+      </ul>
+      <li><pre>preg_match( '/ap*?le/', 'I saw the apple tree.' );</pre>
+      <ul>
+        <li>Returns: <i>True</i>.
+        <li>Note:
+*? = ungreedily match 0 or more of prior bit (so appppple would match),
+but when returning matches the least possible number of characters
+would be returned. See the <a href="#ungreedy">ungreedy</a> modifier below.
+      </ul>
+     </ul>
+    <h4>Extra note on the use of ? after metacharacters that specify matching a number of the prior bit, ie. ?, *, +, {}.</h4>
+This behaviour matches the least possible amount of characters in order
+to complete the matching process, so while '/blah??'/ will match
+'blah', it would really rather just match 'bla'. This comes into play
+heavily while <a href="#submatching">submatching</a>.
+
+    <h4>Special (Meta) Characters</h4>
+    <ul>
+      <li>\s = used to match a single white space character, including tabs and newline characters.
+      <li>\S = used to match everything that is *not* a white space character.
+      <li>\b = used to match word boundaries
+      <li>\B = used to match anything that does not match with \b
+      <li>\d = used to match numbers from 0 to 9.
+      <li>\D = used to match anything that does not match with \d
+      <li>\w = used to match letters, numbers and underscores.
+      <li>\W = used to match anything that does not match with \w
+      <li>\n = newline
+      <li>\r = carriage return
+    </ul><p>
+
+    </p><h4>Note</h4>
+    All regular expressions used with preg* <u>must</u>
+be surrounded by containers, these are usually slashes (/) but could
+just as well be hashes (or 'pound' signs as Americans would have it
+;)). I generally use hashes, as when matching such strings as 'http://'
+I'd have to escape the slashes: '/http:\/\//'. Instead I use the regex
+'#http://#'.<p> Escaping also needs to be used when using any of
+the meta characters mentioned above, you can't just match '1 + 2' with
+'/1 + 2/', you have to escape the '+'. So use '1 \+ 2'. Remember that
+as '\' denotes an escape sequence, it too needs escaping '\\'.</p><p>
+
+    </p><h4>Modifiers</h4>
+    <ul>
+      <li>i = case Insensitive
+      <ul>
+        <li>Does exactly what it says on the tin.
+      </ul>
+      <li><a name="ungreedy"></a>U = Ungreedy
+      <ul>
+        <li>A
+hard one to explain; take BB code tags for example - it helps because
+it won't screw up '[b]bold1[/b] blah [b]bold2[/b]' by not being greedy
+enough to take the first [b] and the last [/b], instead it parses it as
+you'd expect. Note that it's better to use the specific case with this,
+ie. doing '#\[b\](.+?)\[/b\]#i' Note that regex searches are greedy by
+default, and using this modifier reverses that. </ul>
+      <li>s = multiline mode
+      <ul>
+        <li>This
+makes a difference to whether ^ and $ refer to things on the CURRENT
+LINE or the WHOLE string (ie. when 's' is used $ = end of string, not
+end of line) </ul>
+    </ul> Modifiers are used AFTER the regex
+eg. '/regex here/iU'. These are the most useful modifiers in my
+opinion, find more in the <a href="http://php.net/manual/en/reference.pcre.pattern.modifiers.php">PHP Manual</a>.<br/><br/>
+    
+    <h4><a name="submatching"></a>Submatching</h4>
+    <ul>
+      <li>preg* is faster than ereg*, so use those functions. Ereg* may appear at first to be simpler, but in my opinion they're just not as easy in the long run.  
+      <li><pre>$string = 'how now, brown cow?';
+$string = preg_replace( '/^(.+)\snow, (.+)$/', 'first submatch: "\\1", second submatch: "\\2"', $string );
+echo $string;</pre>
+     <ul>
+      <li>Returns: 'first submatch: "how", second submatch: "brown cow?"'
+      <li>Note: Submatching is tremendously useful for any medium/advanced level projects. ie. Most projects that would require regexs.
+      <li>Note:
+I only used '\s' as an example of white space, note that I used a
+normal space on the other side of 'now,'. Pay close attention to the
+fact that the string 'snow' DOES NOT OCCUR inside $string. </ul>
+      <li><pre>$string = 'how now, brown cow?';
+preg_match( '/^(.+)\snow, (.+)$/', $string, $matches );
+print_r( $matches );</pre>
+      <ul>
+        <li>Returns:<pre>Array
+(
+    [0] =&gt; how now, brown cow?
+    [1] =&gt; how
+    [2] =&gt; brown cow?
+)</pre>
+        <li>As you can see, the entirety of the string subsection looked at by the regex is in array index 0.
+        <li>Use of <a href="http://php.net/print_r">print_r()</a> is of course an exceptionally useful method of debugging your regexs.
+      </ul>
+    </ul>
+	<br/><br/>
+	<h4><a name="notes"></a>Notes</h4>
+	<li>See <a href="http://php.net/preg_match_all">preg_match_all</a> for more fun.
+	<li>Regular expression quick ref sheet (PDF) available <a href="http://gmckinney.info/resources/regex.pdf">here</a>
+	<li>Perl Regex ref sheet (PDF) available <a href="http://www.erudil.com/preqr.pdf">here</a>
+	<li>Short reference sheet available <a href="http://www.crazygrrl.com/weav/reference.php3">here</a>
+	<li>The manual contains information on advanced topics not covered in this document; <a href="http://uk2.php.net/manual/en/reference.pcre.pattern.syntax.php#regexp.reference.assertions">Assertions</a>, <a href="http://uk2.php.net/manual/en/reference.pcre.pattern.syntax.php#regexp.reference.onlyonce">Once-only subpatterns</a>, <a href="http://uk2.php.net/manual/en/reference.pcre.pattern.syntax.php#regexp.reference.conditional">Conditional subpatterns</a>, <a href="http://uk2.php.net/manual/en/reference.pcre.pattern.syntax.php#regexp.reference.comments">Comments</a>, <a href="http://uk2.php.net/manual/en/reference.pcre.pattern.syntax.php#regexp.reference.recursive">Recursive patterns</a> and <a href="http://uk2.php.net/manual/en/reference.pcre.pattern.syntax.php#regexp.reference.performances">Performances</a>.
+  </body>
+</html>
